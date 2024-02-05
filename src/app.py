@@ -8,7 +8,7 @@ from flask_swagger import swagger
 from flask_cors import CORS
 from utils import APIException, generate_sitemap
 from admin import setup_admin
-from models import db, User, Character, Planet, Spaceship, Favorites
+from models import db, User, Character, Planet, Favorites
 #from models import Person
 
 app = Flask(__name__)
@@ -39,7 +39,7 @@ def sitemap():
 @app.route('/user', methods=['GET'])
 def get_all_users():
     users = User.query.all()
-    all_users = list(map(lambda x: x.serialize(), users))
+    all_users = list(map(lambda x: x, users))
     return jsonify(all_users), 200
 
 @app.route('/user', methods=['POST'])
@@ -47,19 +47,19 @@ def create_new_users():
     request_body = request.get_json()
     user = User(email = request_body["email"], password = request_body["password"])
     db.session.add(user)
-    db.session.commmit()
+    db.session.commit()
     return jsonify(user,"user successfully created"), 200
 
 @app.route('/character', methods=['GET'])
 def get_all_chacters():
     character = Character.query.all()
-    all_characters = list(map(lambda x: x.serialize(), character))
+    all_characters = list(map(lambda x: x, character))
     return jsonify(all_characters), 200
 
 @app.route('/character/<int:id>', methods=["GET"])
 def get_each_character(id):
     character = Character.query.get(id)
-    return jsonify(character.serialize()),200
+    return jsonify(character),200
 
 @app.route('/character/<int:id>', methods=["DELETE"])
 def delete_character(id):
@@ -73,8 +73,60 @@ def create_new_character():
     request_body = request.get_json()
     character = Character(height = request_body["height"], firstname = request_body["firstname"], lastname = request_body["lastname"])
     db.session.add(character)
-    db.session.commmit()
+    db.session.commit()
     return jsonify(character,"character successfully created"), 200
+
+@app.route('/planet', methods=['GET'])
+def get_all_planets():
+    planets = Planet.query.all()
+    all_planets = list(map(lambda x: x, planets))
+    return jsonify(all_planets), 200
+
+@app.route('/planets/<int:id>', methods=["GET"])
+def get_each_planet(id):
+    planet = Planet.query.get(id)
+    return jsonify(planet),200
+
+@app.route('/planets/<int:id>', methods=["DELETE"])
+def delete_planet(id):
+    planet = Planet.query.get(id)
+    db.session.delete(planet)
+    db.session.commit()
+    return jsonify("planet deleted"), 200
+
+@app.route('/planets', methods=['POST'])
+def create_new_planet():
+    request_body = request.get_json()
+    planet = Planet(climate = request_body["climate"], terrain = request_body["terrain"])
+    db.session.add(planet)
+    db.session.commit()
+    return jsonify(planet,"planet successfully created"), 200
+
+@app.route('/favorites', methods=['GET'])
+def get_all_favorites():
+    favorites = Favorites.query.all()
+    all_favorites = list(map(lambda x: x, favorites))
+    return jsonify(all_favorites), 200
+
+@app.route('/favorites/<int:id>', methods=["GET"])
+def get_each_favorite(id):
+    favorites = Favorites.query.get(id)
+    return jsonify(favorites),200
+
+@app.route('/favorites/<int:id>', methods=["DELETE"])
+def delete_favorites(id):
+    favorites = Favorites.query.get(id)
+    db.session.delete(favorites)
+    db.session.commit()
+    return jsonify("favorite deleted"), 200
+
+@app.route('/favorites', methods=['POST'])
+def create_new_favorite():
+    request_body = request.get_json()
+    favorites = Favorites(user = request_body["user"], character = request_body["character"],planet = request_body["planet"])
+    db.session.add(favorites)
+    db.session.commit()
+    return jsonify(favorites,"planet successfully created"), 200
 
     
 # this only runs if `$ python src/app.py` is executed
