@@ -39,7 +39,7 @@ def sitemap():
 @app.route('/user', methods=['GET'])
 def get_all_users():
     users = User.query.all()
-    all_users = list(map(lambda x: x, users))
+    all_users = list(map(lambda x: x.serialize(), users))
     return jsonify(all_users), 200
 
 @app.route('/user', methods=['POST'])
@@ -53,13 +53,13 @@ def create_new_users():
 @app.route('/character', methods=['GET'])
 def get_all_chacters():
     character = Character.query.all()
-    all_characters = list(map(lambda x: x, character))
+    all_characters = list(map(lambda x: x.serialize(), character))
     return jsonify(all_characters), 200
 
 @app.route('/character/<int:id>', methods=["GET"])
 def get_each_character(id):
     character = Character.query.get(id)
-    return jsonify(character),200
+    return jsonify(character.serialize()),200
 
 @app.route('/character/<int:id>', methods=["DELETE"])
 def delete_character(id):
@@ -74,18 +74,18 @@ def create_new_character():
     character = Character(height = request_body["height"], firstname = request_body["firstname"], lastname = request_body["lastname"])
     db.session.add(character)
     db.session.commit()
-    return jsonify(character,"character successfully created"), 200
+    return jsonify(character.serialize(),"character successfully created"), 200
 
-@app.route('/planet', methods=['GET'])
+@app.route('/planets', methods=['GET'])
 def get_all_planets():
     planets = Planet.query.all()
-    all_planets = list(map(lambda x: x, planets))
+    all_planets = list(map(lambda x: x.serialize(), planets))
     return jsonify(all_planets), 200
 
 @app.route('/planets/<int:id>', methods=["GET"])
 def get_each_planet(id):
     planet = Planet.query.get(id)
-    return jsonify(planet),200
+    return jsonify(planet.serialize()),200
 
 @app.route('/planets/<int:id>', methods=["DELETE"])
 def delete_planet(id):
@@ -100,18 +100,18 @@ def create_new_planet():
     planet = Planet(climate = request_body["climate"], terrain = request_body["terrain"])
     db.session.add(planet)
     db.session.commit()
-    return jsonify(planet,"planet successfully created"), 200
+    return jsonify(planet.serialize(),"planet successfully created"), 200
 
 @app.route('/favorites', methods=['GET'])
 def get_all_favorites():
     favorites = Favorites.query.all()
-    all_favorites = list(map(lambda x: x, favorites))
+    all_favorites = list(map(lambda x: x.serialize(), favorites))
     return jsonify(all_favorites), 200
 
 @app.route('/favorites/<int:id>', methods=["GET"])
 def get_each_favorite(id):
     favorites = Favorites.query.get(id)
-    return jsonify(favorites),200
+    return jsonify(favorites.serialize()),200
 
 @app.route('/favorites/<int:id>', methods=["DELETE"])
 def delete_favorites(id):
